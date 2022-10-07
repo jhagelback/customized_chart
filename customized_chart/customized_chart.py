@@ -309,6 +309,7 @@ def bar_chart(data, opts=None):
     parse_option(opts, "x_label_color", "#244a6e")
     parse_option(opts, "horizontal", False)
     parse_option(opts, "grid", False)
+    parse_option(opts, "y_lim", None)
     
     # Show max n slices (if set)
     if "max_slices" in opts and opts["max_slices"] is not None:
@@ -357,6 +358,9 @@ def bar_chart(data, opts=None):
             return value_format(int(x), opts["value_format"])
         plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
     
+    if opts["y_lim"] is not None:
+        plt.ylim(opts["y_lim"])
+        
     # Show it!
     plt.show()
     plt.close()
@@ -389,6 +393,7 @@ def grouped_bar_chart(data, opts=None):
     parse_option(opts, "x_label", None)
     parse_option(opts, "x_label_color", "#244a6e")
     parse_option(opts, "grid", False)
+    parse_option(opts, "y_lim", None)
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
@@ -448,6 +453,9 @@ def grouped_bar_chart(data, opts=None):
             return value_format(int(x), opts["value_format"])
         plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
     
+    if opts["y_lim"] is not None:
+        plt.ylim(opts["y_lim"])
+        
     # Show it!
     plt.show()
     plt.close()
