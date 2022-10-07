@@ -168,7 +168,8 @@ def filter_max_slices(data, n, other_label):
             other_val += val
         else:
             ndata.update({key: val})
-    ndata.update({other_label: other_val})
+    if other_val > 0:
+        ndata.update({other_label: other_val})
     return ndata
 
 
@@ -208,6 +209,8 @@ def pie_chart(data, opts=None):
     parse_option(opts, "value_format", "")
     parse_option(opts, "label_color", "black")
     parse_option(opts, "label_distance", 0.6)
+    parse_option(opts, "max_label_length", None)
+    parse_option(opts, "max_label_sep", "...")
     
     # Show max n slices (if set)
     if "max_slices" in opts and opts["max_slices"] is not None:
@@ -222,6 +225,14 @@ def pie_chart(data, opts=None):
     
     # Labels and values
     labels = data.keys()
+    if opts["max_label_length"] is not None:
+        nlabels = []
+        for l in labels:
+            if l != opts["other_label"]:
+                nlabels.append(l[:opts["max_label_length"]] + opts["max_label_sep"])
+            else:
+                nlabels.append(l)
+        labels = nlabels
     vals = data.values()
     
     # Slice label formatting
