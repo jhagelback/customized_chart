@@ -1,6 +1,6 @@
 from setuptools import setup
 setup(name="customized_chart",
-    version="0.1.0",
+    version="0.1.1",
     author="Johan Hagelbäck",
     author_email="johan.hagelback@gmail.com",
     description="Simplifies creation of matplotlib charts",
