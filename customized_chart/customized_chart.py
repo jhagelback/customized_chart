@@ -63,7 +63,6 @@ def fix_cmap(name, values):
         print(colored("Warning: ", "red", attrs=["bold"]) + colored(str(name), "blue") + " is not a valid colormap, see")
         print("https://matplotlib.org/stable/gallery/color/colormap_reference.html")
         return None
-        #name = "Paired"
     
     # Get colormap
     cmp = plt.get_cmap(name)
@@ -203,7 +202,7 @@ def pie_chart(data, opts=None):
     parse_option(opts, "title", None)
     parse_option(opts, "show_counts", True)
     parse_option(opts, "other_label", "Other")
-    parse_option(opts, "cmap", "Paired")
+    parse_option(opts, "cmap", "tab20c")
     parse_option(opts, "shadow", False)
     parse_option(opts, "percent_format", "pct-1")
     parse_option(opts, "value_format", "")
