@@ -202,7 +202,7 @@ def pie_chart(data, opts=None):
     parse_option(opts, "title", None)
     parse_option(opts, "show_counts", True)
     parse_option(opts, "other_label", "Other")
-    parse_option(opts, "cmap", "tab20c")
+    parse_option(opts, "cmap", None)
     parse_option(opts, "shadow", False)
     parse_option(opts, "percent_format", "pct-1")
     parse_option(opts, "value_format", "")
@@ -233,6 +233,13 @@ def pie_chart(data, opts=None):
                 nlabels.append(l)
         labels = nlabels
     vals = data.values()
+    
+    # Set default cmap depending on no slices
+    if opts["cmap"] is None:
+        if len(labels) <= 20:
+            opts["cmap"] = "tab20c"
+        else:
+            opts["cmap"] = "Spectral"
     
     # Slice label formatting
     def make_autopct(values):
