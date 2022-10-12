@@ -198,7 +198,7 @@ def pie_chart(data, opts=None):
     parse_option(opts, "font", "Arial")
     parse_option(opts, "angle", 0)
     parse_option(opts, "show_total", False)
-    #total = parse_option(opts, "total", None)
+    total = parse_option(opts, "total", None)
     parse_option(opts, "title", None)
     parse_option(opts, "show_counts", True)
     parse_option(opts, "other_label", "Other")
@@ -245,7 +245,8 @@ def pie_chart(data, opts=None):
     def make_autopct(values):
         def m_autopct(pct):
             val = round(pct*sum(values)/100.0)
-            # pct = val / total * 100
+            if opts["total"] is not None and type(opts["total"]) in [int,float]:
+                pct = val / opts["total"] * 100
             l = percent_format(pct, opts["percent_format"])
             if opts["show_counts"]:
                 l += f"  ({value_format(val, opts['value_format'])})"
@@ -266,7 +267,11 @@ def pie_chart(data, opts=None):
     # Title
     if opts["title"] is not None:
         if opts["show_total"] and opts["title"] != "":
-            opts["title"] += f" ({sum(vals)})"
+            if opts["total"] is not None and type(opts["total"]) in [int,float]:
+                tot = opts["total"]
+            else:
+                tot = sum(vals)
+            opts["title"] += f" ({value_format(tot, opts['value_format'])})"
         plt.title(opts["title"], fontweight="bold", fontsize=opts["title_fontsize"], y=1.04)
     
     # Generate pie
