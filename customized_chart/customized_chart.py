@@ -198,7 +198,9 @@ def pie_chart(data, opts=None):
     parse_option(opts, "font", "Arial")
     parse_option(opts, "angle", 0)
     parse_option(opts, "show_total", False)
-    total = parse_option(opts, "total", None)
+    parse_option(opts, "total", None)
+    parse_option(opts, "show_missing", False)
+    parse_option(opts, "label_missing", "-")
     parse_option(opts, "title", None)
     parse_option(opts, "show_counts", True)
     parse_option(opts, "other_label", "Other")
@@ -211,9 +213,17 @@ def pie_chart(data, opts=None):
     parse_option(opts, "max_label_length", None)
     parse_option(opts, "max_label_sep", "...")
     
+    # Make a copy of the data (since it can be changed)
+    data = data.copy()
+    
     # Show max n slices (if set)
     if "max_slices" in opts and opts["max_slices"] is not None:
         data = filter_max_slices(data, opts["max_slices"], opts["other_label"])
+    # Show missing
+    if opts["show_missing"]:
+        no_missing = opts["total"] - sum(data.values())
+        if no_missing > 0:
+            data.update({opts["label_missing"]: no_missing})
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
