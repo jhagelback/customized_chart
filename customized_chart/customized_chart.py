@@ -200,7 +200,7 @@ def pie_chart(data, opts=None):
     parse_option(opts, "show_total", False)
     parse_option(opts, "total", None)
     parse_option(opts, "show_missing", False)
-    parse_option(opts, "label_missing", "-")
+    parse_option(opts, "missing_label", "-")
     parse_option(opts, "title", None)
     parse_option(opts, "show_counts", True)
     parse_option(opts, "other_label", "Other")
@@ -223,7 +223,7 @@ def pie_chart(data, opts=None):
     if opts["show_missing"]:
         no_missing = opts["total"] - sum(data.values())
         if no_missing > 0:
-            data.update({opts["label_missing"]: no_missing})
+            data.update({opts["missing_label"]: no_missing})
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
@@ -237,7 +237,7 @@ def pie_chart(data, opts=None):
     if opts["max_label_length"] is not None:
         nlabels = []
         for l in labels:
-            if l != opts["other_label"]:
+            if l != opts["other_label"] and l != opts["missing_label"]:
                 nlabels.append(l[:opts["max_label_length"]] + opts["max_label_sep"])
             else:
                 nlabels.append(l)
