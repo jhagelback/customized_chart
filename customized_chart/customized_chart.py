@@ -682,15 +682,21 @@ def multi_line_chart(data, opts=None):
             plt.plot(labels, vals, color=col, linewidth=2)
         else:
             plt.plot(vals, color=col, linewidth=2)
-                    
-        # Trend line
-        if opts["trend"]:
+    
+    # Legend
+    if opts["legend"] is not None:
+        plt.gca().legend(opts["legend"])
+        
+    # Trend lines
+    if opts["trend"]:
+        for e,col in zip(data,colors):
+            if type(e) == dict:
+                vals = list(e.values())
+            else:
+                vals = e
             p = np.poly1d(np.polyfit(range(0,len(vals)), vals, 1))
             trend = [p(x) for x in range(0,len(vals))]
             plt.plot(trend, color=col, linestyle="--", linewidth=1)
-    
-    if opts["legend"] is not None:
-        plt.gca().legend(opts["legend"])
     
     # Grid
     if opts["grid"]:
