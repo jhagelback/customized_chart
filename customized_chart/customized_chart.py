@@ -57,26 +57,39 @@ def fix_cmap(name, values):
     if name is None:
         return None
     
-    # Check if valid colormap, or use default
-    cmaps = plt.colormaps()
-    if name not in cmaps:
-        print(colored("Warning: ", "red", attrs=["bold"]) + colored(str(name), "blue") + " is not a valid colormap, see")
-        print("https://matplotlib.org/stable/gallery/color/colormap_reference.html")
-        return None
-    
-    # Get colormap
-    cmp = plt.get_cmap(name)
-    
-    # Get list of colors
-    if hasattr(cmp, "colors"):
-        cmp = cmp.colors
+    # Named colormap
+    if type(name) == str:
+        # Check if valid colormap, or use default
+        cmaps = plt.colormaps()
+        if name not in cmaps:
+            print(colored("Warning: ", "red", attrs=["bold"]) + colored(str(name), "blue") + " is not a valid colormap, see")
+            print("https://matplotlib.org/stable/gallery/color/colormap_reference.html")
+            return None
+
+        # Get colormap
+        cmp = plt.get_cmap(name)
+
+        # Get list of colors
+        if hasattr(cmp, "colors"):
+            cmp = cmp.colors
+        else:
+            cmp = cmp(np.arange(0,cmp.N))
+    # Specified colors
+    elif type(name) == list:
+        cmp = []
+        for c in name:
+            c = c.lstrip("#")
+            cmp.append(tuple(int(c[i:i+2], 16) / 255 for i in (0, 2, 4)))
+        
+    # Unknown type, return default
     else:
-        cmp = cmp(np.arange(0,cmp.N)) 
+        return None
+            
     # Multiply list if no values > no colors
     if len(values) > len(cmp):
         n = int(len(values)/len(cmp))+1
         cmp += cmp * n
-    
+        
     # Scale to number of values
     step = int(len(cmp) / len(values))
     step = min(int(len(cmp)/10), step)
