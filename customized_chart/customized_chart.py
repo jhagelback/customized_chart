@@ -225,6 +225,7 @@ def pie_chart(data, opts=None):
     parse_option(opts, "label_distance", 0.6)
     parse_option(opts, "max_label_length", None)
     parse_option(opts, "max_label_sep", "...")
+    parse_option(opts, "border", None)
     
     # Make a copy of the data (since it can be changed)
     data = data.copy()
@@ -297,8 +298,13 @@ def pie_chart(data, opts=None):
             opts["title"] += f" ({value_format(tot, opts['value_format'])})"
         plt.title(opts["title"], fontweight="bold", fontsize=opts["title_fontsize"], y=1.04)
     
+    # Border
+    wp = None
+    if opts["border"] is not None:
+        wp = {"edgecolor": opts["border"][0], "linewidth": opts["border"][1]}
+        
     # Generate pie
-    plt.pie(vals, labels=labels, explode=expl, autopct=make_autopct(vals), pctdistance=opts["label_distance"], shadow=opts["shadow"], startangle=opts["angle"], colors=fix_cmap(opts["cmap"], vals), textprops={"color": opts["label_color"]})
+    plt.pie(vals, labels=labels, explode=expl, autopct=make_autopct(vals), pctdistance=opts["label_distance"], shadow=opts["shadow"], startangle=opts["angle"], colors=fix_cmap(opts["cmap"], vals), textprops={"color": opts["label_color"]}, wedgeprops=wp)
     
     plt.tight_layout()
     
