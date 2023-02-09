@@ -630,7 +630,7 @@ def line_chart(data, opts=None):
 #
 def multi_line_chart(data, opts=None):
     # Check params  
-    if not valid(data, [list, np.ndarray]): return
+    if not valid(data, [dict]): return
     if opts is None:
         opts = {}
     if not valid(opts, [dict]): return
@@ -651,7 +651,7 @@ def multi_line_chart(data, opts=None):
     parse_option(opts, "grid", False)
     parse_option(opts, "labels", "range 0")
     parse_option(opts, "labels_fontsize", 12)
-    parse_option(opts, "legend", None)
+    parse_option(opts, "legend", True)
     parse_option(opts, "trend", False)
     parse_option(opts, "cmap", "Paired")
     
@@ -669,12 +669,12 @@ def multi_line_chart(data, opts=None):
     
     # Convert values
     colors=fix_cmap(opts["cmap"], range(0,len(data)))
-    for e,col in zip(data,colors):
-        if type(e) == dict:
-            vals = list(e.values())
-            labels = list(e.keys())
+    for vals,col in zip(data["values"],colors):
+        if "labels" in data and data["labels"] is not None:
+            labels = data["labels"]
+            if not valid(labels, [list], length=len(vals)):
+                return
         else:
-            vals = e
             labels = generate_labels(opts["labels"], len(vals))
 
         # Generate line
@@ -684,12 +684,12 @@ def multi_line_chart(data, opts=None):
             plt.plot(vals, color=col, linewidth=2)
     
     # Legend
-    if opts["legend"] is not None:
-        plt.gca().legend(opts["legend"])
+    if opts["legend"]:
+        plt.gca().legend(data["series"])
         
     # Trend lines
     if opts["trend"]:
-        for e,col in zip(data,colors):
+        for e,col in zip(data["values"],colors):
             if type(e) == dict:
                 vals = list(e.values())
             else:
