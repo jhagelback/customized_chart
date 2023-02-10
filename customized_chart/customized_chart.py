@@ -668,7 +668,7 @@ def multi_line_chart(data, opts=None):
         plt.title(opts["title"], fontweight="bold", fontsize=opts["title_fontsize"], y=1.04)
     
     # Convert values
-    colors=fix_cmap(opts["cmap"], range(0,len(data)))
+    colors=fix_cmap(opts["cmap"], range(0,len(data["values"])))
     for vals,col in zip(data["values"],colors):
         if "labels" in data and data["labels"] is not None:
             labels = data["labels"]
