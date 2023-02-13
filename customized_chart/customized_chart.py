@@ -435,6 +435,9 @@ def grouped_bar_chart(data, opts=None):
     parse_option(opts, "x_label_color", "#244a6e")
     parse_option(opts, "grid", False)
     parse_option(opts, "y_lim", None)
+    parse_option(opts, "legend", True)
+    parse_option(opts, "legend_position", None)
+    parse_option(opts, "bbox", None)
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
@@ -469,10 +472,20 @@ def grouped_bar_chart(data, opts=None):
     for i in range(0,data["n"]):
         bars.append(ax.bar(x + spacing*i + spos, data["values"][i], width, label=data["series"][i], color=cols[i]))
     
+    # X-ticks
     ax.set_xticks(x)
     ax.set_xticklabels(data["labels"])
-    ax.legend()
-
+    
+    # Legend
+    if opts["legend"]:
+        if opts["legend_position"] is None:
+            ax.legend()
+        else:
+            if opts["bbox"] is None:
+                ax.legend(loc=opts["legend_position"])
+            else:
+                ax.legend(loc=opts["legend_position"], bbox_to_anchor=opts["bbox"])
+                
     # Bar labels
     if opts["bar_labels"]:
         for i in range(0,data["n"]):
