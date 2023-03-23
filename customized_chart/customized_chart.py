@@ -664,9 +664,11 @@ def multi_line_chart(data, opts=None):
     parse_option(opts, "grid", False)
     parse_option(opts, "labels", "range 0")
     parse_option(opts, "labels_fontsize", 12)
-    parse_option(opts, "legend", True)
     parse_option(opts, "trend", False)
     parse_option(opts, "cmap", "Paired")
+    parse_option(opts, "legend", True)
+    parse_option(opts, "legend_position", None)
+    parse_option(opts, "bbox", None)
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
@@ -698,8 +700,14 @@ def multi_line_chart(data, opts=None):
     
     # Legend
     if opts["legend"]:
-        plt.gca().legend(data["series"])
-        
+        if opts["legend_position"] is None:
+            plt.gca().legend(data["series"])
+        else:
+            if opts["bbox"] is None:
+                plt.gca().legend(data["series"], loc=opts["legend_position"])
+            else:
+                plt.gca().legend(data["series"], loc=opts["legend_position"], bbox_to_anchor=opts["bbox"])
+
     # Trend lines
     if opts["trend"]:
         for e,col in zip(data["values"],colors):
