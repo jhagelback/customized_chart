@@ -196,9 +196,11 @@ def value_format(val, fmt):
                 return int(val)
             return f"{val}"
     elif fmt == "int":
-        return f"{val:0}"
+        val = round(val)
+        return f"{val:0f}"
     else:
-        return f"{val}"
+        val = round(val)
+        return f"{val:.0f}"
 
 
 #
