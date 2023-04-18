@@ -162,6 +162,31 @@ def value_format(val, fmt):
             return f"{val:.4f}"
         else:
             return f"{val}"
+    elif fmt.startswith("int-"):
+        if fmt.endswith("-1"):
+            val = round(val,1)
+            if val.is_integer():
+                return int(val)
+            return f"{val:.1f}"
+        elif fmt.endswith("-2"):
+            val = round(val,2)
+            if val.is_integer():
+                return int(val)
+            return f"{val:.2f}"
+        elif fmt.endswith("-3"):
+            val = round(val,3)
+            if val.is_integer():
+                return int(val)
+            return f"{val:.3f}"
+        elif fmt.endswith("-4"):
+            val = round(val,4)
+            if val.is_integer():
+                return int(val)
+            return f"{val:.4f}"
+        else:
+            if val.is_integer():
+                return int(val)
+            return f"{val}"
     else:
         return f"{val}"
 
@@ -268,7 +293,7 @@ def pie_chart(data, opts=None):
     # Slice label formatting
     def make_autopct(values):
         def m_autopct(pct):
-            val = round(pct*sum(values)/100.0)
+            val = pct*sum(values)/100.0
             if opts["total"] is not None and type(opts["total"]) in [int,float]:
                 pct = val / opts["total"] * 100
             l = percent_format(pct, opts["percent_format"])
