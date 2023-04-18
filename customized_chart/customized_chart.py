@@ -125,6 +125,7 @@ def percent_format(val, fmt):
 #
 def value_format(val, fmt):
     if fmt.startswith("prefix"):
+        val = round(val)
         if type(val) not in [int,float]:
             return val
 
@@ -163,6 +164,13 @@ def value_format(val, fmt):
         else:
             return f"{val}"
     elif fmt.startswith("int-"):
+        if type(val) == int:
+            return val
+        if fmt.endswith("-0"):
+            val = round(val)
+            if val.is_integer():
+                return int(val)
+            return f"{val:.0f}"
         if fmt.endswith("-1"):
             val = round(val,1)
             if val.is_integer():
@@ -187,6 +195,8 @@ def value_format(val, fmt):
             if val.is_integer():
                 return int(val)
             return f"{val}"
+    elif fmt == "int":
+        return f"{val:0}"
     else:
         return f"{val}"
 
