@@ -618,6 +618,7 @@ def line_chart(data, opts=None):
     parse_option(opts, "labels_fontsize", 12)
     parse_option(opts, "trend", False)
     parse_option(opts, "trend_color", "#e80613")
+    parse_option(opts, "show_values", False)
     
     # Convert values
     if type(data) == dict:
@@ -642,8 +643,14 @@ def line_chart(data, opts=None):
     # Generate line
     if labels is not None:
         plt.plot(labels, vals, color=opts["color"], linewidth=2)
+        
     else:
         plt.plot(vals, color=opts["color"], linewidth=2)
+        
+    # Show values
+    if opts["show_values"]:
+        for x, y in zip(labels, vals):
+            plt.annotate(y, (x,y), xycoords="data", textcoords="offset points", xytext=(0,10), ha="center")
         
     # Grid
     if opts["grid"]:
