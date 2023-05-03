@@ -1,6 +1,7 @@
 import sys
 from termcolor import colored
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 import numpy as np
 
 
@@ -109,14 +110,24 @@ def fix_cmap(name, values):
 def percent_format(val, fmt):
     if fmt == "none":
         return ""
+    if fmt == "pct-000":
+        return f"{val*100:.0f}%"
     if fmt == "pct-1":
         return f"{val:.1f}%"
+    if fmt == "pct-100":
+        return f"{val*100:.1f}%"
     if fmt == "pct-2":
         return f"{val:.2f}%"
+    if fmt == "pct-200":
+        return f"{val*100:.2f}%"
     if fmt == "pct-3":
         return f"{val:.3f}%"
+    if fmt == "pct-300":
+        return f"{val*100:.3f}%"
     if fmt == "pct-4":
         return f"{val:.4f}%"
+    if fmt == "pct-400":
+        return f"{val*100:.4f}%"
     return f"{round(val):d}%"
     
 
@@ -149,10 +160,14 @@ def value_format(val, fmt):
                         return f"{val/p[0]:.2f}{p[1]}"
                     if fmt.endswith("-1"):
                         return f"{val/p[0]:.1f}{p[1]}"
+                    if fmt.endswith("-0") or fmt == "prefix":
+                        return f"{val/p[0]:.0f}{p[1]}"
                     return f"{val/p[0]}{p[1]}"
 
         # No prefix match
         return f"{val}"
+    elif fmt.startswith("pct"):
+        return percent_format(val, fmt)
     elif fmt.startswith("dec"):
         if fmt.endswith("-0"):
             return f"{round(val):d}"
@@ -675,9 +690,13 @@ def line_chart(data, opts=None):
         plt.xlabel(opts["x_label"], color=opts["x_label_color"], fontweight="bold")
     
     # Set y-label format to prefix
-    if opts["value_format"].startswith("prefix"):
+    #if opts["value_format"].startswith("prefix"):
+    #    def label_formatter(x, pos):
+    #        return value_format(int(x), opts["value_format"])
+    #    plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
+    if opts["value_format"] != "":
         def label_formatter(x, pos):
-            return value_format(int(x), opts["value_format"])
+            return value_format(x, opts["value_format"])
         plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
     
     if opts["y_lim"] is not None:
@@ -790,9 +809,13 @@ def multi_line_chart(data, opts=None):
         plt.xlabel(opts["x_label"], color=opts["x_label_color"], fontweight="bold")
     
     # Set y-label format to prefix
-    if opts["value_format"].startswith("prefix"):
+    #if opts["value_format"].startswith("prefix"):
+    #    def label_formatter(x, pos):
+    #        return value_format(int(x), opts["value_format"])
+    #    plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
+    if opts["value_format"] != "":
         def label_formatter(x, pos):
-            return value_format(int(x), opts["value_format"])
+            return value_format(x, opts["value_format"])
         plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
     
     if opts["y_lim"] is not None:
