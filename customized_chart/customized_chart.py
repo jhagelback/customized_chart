@@ -124,6 +124,9 @@ def percent_format(val, fmt):
 # Formats a value with prefix (for example M for million).
 #
 def value_format(val, fmt):
+    if type(fmt) != str:
+        return val
+    
     if fmt.startswith("prefix"):
         val = round(val)
         if type(val) not in [int,float]:
@@ -168,39 +171,38 @@ def value_format(val, fmt):
             return val
         if fmt.endswith("-0"):
             val = round(val)
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val:.0f}"
         if fmt.endswith("-1"):
             val = round(val,1)
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val:.1f}"
         elif fmt.endswith("-2"):
             val = round(val,2)
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val:.2f}"
         elif fmt.endswith("-3"):
             val = round(val,3)
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val:.3f}"
         elif fmt.endswith("-4"):
             val = round(val,4)
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val:.4f}"
         else:
-            if val.is_integer():
+            if type(val) == int or val.is_integer():
                 return int(val)
             return f"{val}"
     elif fmt == "int":
         val = round(val)
-        return f"{val:0f}"
+        return int(val)
     else:
-        val = round(val)
-        return f"{val:.0f}"
+        return val
 
 
 #
@@ -619,6 +621,7 @@ def line_chart(data, opts=None):
     parse_option(opts, "trend", False)
     parse_option(opts, "trend_color", "#e80613")
     parse_option(opts, "show_values", False)
+    parse_option(opts, "show_values_step", 1)
     
     # Convert values
     if type(data) == dict:
@@ -649,8 +652,11 @@ def line_chart(data, opts=None):
         
     # Show values
     if opts["show_values"]:
+        i = 0
         for x, y in zip(labels, vals):
-            plt.annotate(y, (x,y), xycoords="data", textcoords="offset points", xytext=(0,10), ha="center")
+            if i % opts["show_values_step"] == 0:
+                plt.annotate(value_format(y, opts["value_format"]), (x,y), xycoords="data", textcoords="offset points", xytext=(0,10), ha="center")
+            i += 1
         
     # Grid
     if opts["grid"]:
@@ -709,6 +715,8 @@ def multi_line_chart(data, opts=None):
     parse_option(opts, "labels", "range 0")
     parse_option(opts, "labels_fontsize", 12)
     parse_option(opts, "trend", False)
+    parse_option(opts, "show_values", False)
+    parse_option(opts, "show_values_step", 1)
     parse_option(opts, "cmap", "Paired")
     parse_option(opts, "legend", True)
     parse_option(opts, "legend_position", None)
@@ -741,6 +749,14 @@ def multi_line_chart(data, opts=None):
             plt.plot(labels, vals, color=col, linewidth=2)
         else:
             plt.plot(vals, color=col, linewidth=2)
+            
+        # Show values
+        if opts["show_values"]:
+            i = 0
+            for x, y in zip(labels, vals):
+                if i % opts["show_values_step"] == 0:
+                    plt.annotate(value_format(y, opts["value_format"]), (x,y), xycoords="data", textcoords="offset points", xytext=(0,10), ha="center")
+                i += 1
     
     # Legend
     if opts["legend"]:
