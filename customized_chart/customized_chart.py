@@ -843,13 +843,15 @@ def box_plot(data, opts={}):
     parse_option(opts, "label_rotation", 0)
     parse_option(opts, "y_label", None)
     parse_option(opts, "y_label_color", "#244a6e")
-    parse_option(opts, "y_lim", None)
+    parse_option(opts, "lim", None)
     parse_option(opts, "x_label", None)
     parse_option(opts, "x_label_color", "#244a6e")
     parse_option(opts, "grid", False)
     parse_option(opts, "labels", "range 0")
     parse_option(opts, "labels_fontsize", 12)
+    parse_option(opts, "labels_color", "#000")
     parse_option(opts, "cmap", "Paired")
+    parse_option(opts, "horizontal", False)
     
     # Plot settings
     plt.rcParams.update({"font.size": opts["fontsize"]})
@@ -857,7 +859,10 @@ def box_plot(data, opts={}):
     plt.figure(figsize=opts["size"])
     plt.tight_layout()
     
-    plt.xticks(fontsize=opts["labels_fontsize"], rotation=opts["label_rotation"])
+    if opts["horizontal"]:
+        plt.yticks(fontsize=opts["labels_fontsize"], rotation=opts["label_rotation"], color=opts["labels_color"])
+    else:
+        plt.xticks(fontsize=opts["labels_fontsize"], rotation=opts["label_rotation"], color=opts["labels_color"])
     
     # Title
     if opts["title"] is not None:
@@ -887,11 +892,18 @@ def box_plot(data, opts={}):
             return value_format(x, opts["value_format"])
         plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
     
-    if opts["y_lim"] is not None:
-        plt.ylim(opts["y_lim"])
+    if opts["lim"] is not None:
+        if opts["horizontal"]:
+            plt.xlim(opts["lim"])
+        else:
+            plt.ylim(opts["lim"])
     
     # Create plot
-    bp = plt.boxplot(data["values"], labels=labels, patch_artist=True)
+    if opts["horizontal"]:
+        vert = False
+    else:
+        vert = True
+    bp = plt.boxplot(data["values"], labels=labels, patch_artist=True, vert=vert)
     
     # Colors
     colors=fix_cmap(opts["cmap"], range(0,len(data["values"])))
