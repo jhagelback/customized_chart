@@ -660,8 +660,7 @@ def line_chart(data, opts=None):
     
     # Generate line
     if labels is not None:
-        plt.plot(labels, vals, color=opts["color"], linewidth=2)
-        
+        plt.plot(labels, vals, color=opts["color"], linewidth=2)   
     else:
         plt.plot(vals, color=opts["color"], linewidth=2)
         
@@ -689,11 +688,7 @@ def line_chart(data, opts=None):
     if opts["x_label"] is not None:
         plt.xlabel(opts["x_label"], color=opts["x_label_color"], fontweight="bold")
     
-    # Set y-label format to prefix
-    #if opts["value_format"].startswith("prefix"):
-    #    def label_formatter(x, pos):
-    #        return value_format(int(x), opts["value_format"])
-    #    plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
+    # Set y-label format
     if opts["value_format"] != "":
         def label_formatter(x, pos):
             return value_format(x, opts["value_format"])
@@ -808,11 +803,7 @@ def multi_line_chart(data, opts=None):
     if opts["x_label"] is not None:
         plt.xlabel(opts["x_label"], color=opts["x_label_color"], fontweight="bold")
     
-    # Set y-label format to prefix
-    #if opts["value_format"].startswith("prefix"):
-    #    def label_formatter(x, pos):
-    #        return value_format(int(x), opts["value_format"])
-    #    plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
+    # Set y-label format
     if opts["value_format"] != "":
         def label_formatter(x, pos):
             return value_format(x, opts["value_format"])
@@ -820,6 +811,92 @@ def multi_line_chart(data, opts=None):
     
     if opts["y_lim"] is not None:
         plt.ylim(opts["y_lim"])
+    
+    # Show it!
+    plt.show()
+    plt.close()
+
+
+#
+# Generate boxplots.
+#
+def box_plot(data, opts={}):
+    # Check params  
+    if not valid(data, [dict,list]): return
+    if opts is None:
+        opts = {}
+    if not valid(opts, [dict]): return
+    
+    # Convert data to dict (if needed)
+    if type(data) == list:
+        data = {
+            "values": data,
+        }
+
+    # Parse options
+    parse_option(opts, "size", (14,6))
+    parse_option(opts, "fontsize", 14)
+    parse_option(opts, "title_fontsize", 18)
+    parse_option(opts, "font", "Arial")
+    parse_option(opts, "title", None)
+    parse_option(opts, "value_format", "")
+    parse_option(opts, "label_rotation", 0)
+    parse_option(opts, "y_label", None)
+    parse_option(opts, "y_label_color", "#244a6e")
+    parse_option(opts, "y_lim", None)
+    parse_option(opts, "x_label", None)
+    parse_option(opts, "x_label_color", "#244a6e")
+    parse_option(opts, "grid", False)
+    parse_option(opts, "labels", "range 0")
+    parse_option(opts, "labels_fontsize", 12)
+    parse_option(opts, "cmap", "Paired")
+    
+    # Plot settings
+    plt.rcParams.update({"font.size": opts["fontsize"]})
+    plt.rcParams.update({"font.family": opts["font"]})
+    plt.figure(figsize=opts["size"])
+    plt.tight_layout()
+    
+    plt.xticks(fontsize=opts["labels_fontsize"], rotation=opts["label_rotation"])
+    
+    # Title
+    if opts["title"] is not None:
+        plt.title(opts["title"], fontweight="bold", fontsize=opts["title_fontsize"], y=1.04)
+    
+    # Grid
+    if opts["grid"]:
+        plt.grid(axis="y", color ="grey", linewidth=0.5, alpha=0.2)
+        
+    # Labels
+    if "series" in data and data["series"] is not None:
+        labels = data["series"]
+        if not valid(labels, [list], length=len(data["series"])):
+            return
+    else:
+        labels = generate_labels(opts["labels"], len(data["values"]))
+    
+    # Axis labels
+    if opts["y_label"] is not None:
+        plt.ylabel(opts["y_label"], color=opts["y_label_color"], fontweight="bold")
+    if opts["x_label"] is not None:
+        plt.xlabel(opts["x_label"], color=opts["x_label_color"], fontweight="bold")
+    
+    # Set y-label format
+    if opts["value_format"] != "":
+        def label_formatter(x, pos):
+            return value_format(x, opts["value_format"])
+        plt.gca().yaxis.set_major_formatter(plt.matplotlib.ticker.FuncFormatter(label_formatter))
+    
+    if opts["y_lim"] is not None:
+        plt.ylim(opts["y_lim"])
+    
+    # Create plot
+    bp = plt.boxplot(data["values"], labels=labels, patch_artist=True)
+    
+    # Colors
+    colors=fix_cmap(opts["cmap"], range(0,len(data["values"])))
+    for i,patch in enumerate(bp["boxes"]):
+        patch.set(facecolor=colors[i]) 
     
     # Show it!
     plt.show()
